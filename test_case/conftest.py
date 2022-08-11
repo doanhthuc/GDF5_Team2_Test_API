@@ -32,7 +32,7 @@ def env_config(request):
 def get_root_path(project_name):
     cur_path = os.path.abspath(os.path.dirname(__file__))
     root_path = cur_path[:cur_path.find(project_name+"\\") + len(project_name+"\\")]
-    root_path = "D:/BaseClientPython/"
+    root_path = "D:/VNG/GDF5_Team2_Test_API/"
     return root_path
 
 

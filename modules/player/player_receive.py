@@ -29,10 +29,42 @@ class CmdReceiveOpenChest(InPacket):
 
     def read_data(self):
         print("error = {}".format(self.get_error()))
-    
-        self.chestId = self.get_int()
-        self.state = self.get_int()
-        self.claimTime = self.get_long()
-        print("chestId = {}".format(self.chestId))
-        print("state = {}".format(self.state))
-        print("claimTime = {}".format(self.claimTime))
+        error_code = self.get_error()
+        if error_code == 0:
+            self.chestId = self.get_int()
+            self.state = self.get_int()
+            self.claimTime = self.get_long()
+            print("chestId = {}".format(self.chestId))
+            print("state = {}".format(self.state))
+            print("claimTime = {}".format(self.claimTime))
+
+
+class CmdReceiveSpeedUpChest(InPacket):
+    def __init__(self):
+        super().__init__()
+
+    def read_data(self):
+        print("error = {}".format(self.get_error()))
+        error_code = self.get_error()
+        if error_code == 0:
+            self.chestId = self.get_int()
+            self.state = self.get_int()
+            self.claimTime = self.get_long()
+            print("chestId = {}".format(self.chestId))
+            print("state = {}".format(self.state))
+            print("claimTime = {}".format(self.claimTime))
+
+class CmdReceiveClaimChest(InPacket):
+    def __init__(self):
+        super().__init__()
+
+    def read_data(self):
+        print("error = {}".format(self.get_error()))
+        error_code = self.get_error()
+        if error_code == 0:
+            self.chestId = self.get_int()
+            self.state = self.get_int()
+            self.claimTime = self.get_long()
+            print("chestId = {}".format(self.chestId))
+            print("state = {}".format(self.state))
+            print("claimTime = {}".format(self.claimTime))

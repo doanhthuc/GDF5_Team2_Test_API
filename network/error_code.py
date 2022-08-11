@@ -1,7 +1,12 @@
 
-SUCCESS=                                    0
-FAIL=                                       1
-PARAM_INVALID=                              2
-MAINTAIN_SYSTEM=                            3
-SESSION_KEY_INVALID=                        4
-SESSION_EXPIRED=                            5
+SUCCESS = 0
+FAIL = 1
+PARAM_INVALID = 2
+MAINTAIN_SYSTEM = 3
+SESSION_KEY_INVALID = 4
+SESSION_EXPIRED = 5
+
+# CHEST ERROR CODE
+CHEST_NULL_ERROR = 2
+CHEST_STATE_ERROR = 3
+NOT_ENOUGH_GEM = 4

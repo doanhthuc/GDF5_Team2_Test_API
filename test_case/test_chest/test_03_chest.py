@@ -9,20 +9,21 @@ from utils.read_excel import *
 from modules.game import Game
 
 # get test data
-test_chest_data = get_data_from_xls("test_data\\test_chest.xls", "OpenChest")
+test_chest_data = get_data_from_xls(
+    "test_data\\test_chest.xls", "ClaimChest")
 
 
-@allure.step("step 1 =>> open chest")
+@allure.step("step 1 =>> claim chest")
 def step_1(username):
-    logger.info("step 1 ==> open chest：{}".format(username))
+    logger.info("step 1 ==> claim chest：{}".format(username))
 
 
 @allure.severity(allure.severity_level.NORMAL)
 @allure.epic("single_interface")
 @allure.feature("login_module")
-class TestOpenChest:
+class TestClaimChest:
 
-    @allure.story("use case - open chest")
+    @allure.story("use case - claim chest")
     @allure.description("test user opn chest ok")
     @allure.issue("https://mantistbt.zingplay.com", name="1")
     @allure.testcase("https://mantistbt.zingplay.com", name="2")
@@ -46,13 +47,15 @@ class TestOpenChest:
         print("except_code = ", except_code)
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-        assert login_code == error_code.SUCCESS, "invalid error login code"
+        assert str(login_code) == except_code, "invalid error login code"
 
-        game2.open_chest(int(chestId))
+        player_module = game2.get_player_module()
+
+        player_module.send_claim_chest(int(chestId))
         step_1(chestId)
         time.sleep(0.5)
 
-        open_chest_code = game2.get_open_chest_code()
+        open_chest_code = player_module.get_speed_up_chest_code()
 
         assert str(open_chest_code) == except_code, "invalid error chest code"
 
