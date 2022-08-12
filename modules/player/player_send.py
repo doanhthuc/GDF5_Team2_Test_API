@@ -40,3 +40,5 @@ class CmdSendClaimChest(OutPacket):
     def put_data(self):
         self.put_int(self.__chestId)
         print("chestId: ", self.__chestId)
+
+

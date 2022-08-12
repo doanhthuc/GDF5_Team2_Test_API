@@ -8,6 +8,7 @@ from modules.game import Game
 
 BASE_PATH = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
+
 def get_data(yaml_file_name):
     try:
         data_file_path = os.path.join(BASE_PATH, "data", yaml_file_name)
@@ -17,7 +18,8 @@ def get_data(yaml_file_name):
     else:
         return yaml_data
 
-@pytest.fixture(scope="session",autouse=True)
+
+@pytest.fixture(scope="session", autouse=True)
 def env_config(request):
     """
     read config
@@ -29,14 +31,16 @@ def env_config(request):
         env_config = yaml.safe_load(f)
     return env_config
 
+
 def get_root_path(project_name):
     cur_path = os.path.abspath(os.path.dirname(__file__))
-    root_path = cur_path[:cur_path.find(project_name+"\\") + len(project_name+"\\")]
-    root_path = "D:/VNG/GDF5_Team2_Test_API/"
+    root_path = cur_path[:cur_path.find(
+        project_name+"\\") + len(project_name+"\\")]
+    root_path = "D:/BaseClientPython/"
     return root_path
 
 
 # init game client
 #game = Game()
 
-#print("init_game")
+# print("init_game")

@@ -1,3 +1,4 @@
+import re
 from modules.base_module import BaseModule
 from modules.player.player_send import *
 from network.base_packet import *
@@ -23,6 +24,10 @@ class PlayerModule(BaseModule):
             pkg = CmdReceivePlayerInfo()
             pkg.init(raw_pkg)
             self.on_process_player_info(pkg)
+        if cmd_id == cmd_code.GET_USER_INVENTORY:
+            pkg = CmdReceiveUserInventory()
+            pkg.init(raw_pkg)
+            self.on_process_user_inventory(pkg)
         if cmd_id == cmd_code.OPEN_CHEST:
             pkg = CmdReceiveOpenChest()
             pkg.init(raw_pkg)
@@ -35,21 +40,34 @@ class PlayerModule(BaseModule):
             pkg = CmdReceiveClaimChest()
             pkg.init(raw_pkg)
             self.on_process_claim_chest(pkg)
-        
 
     def send_get_player_info(self):
         pk = CmdCommonPacket(cmd_code.PLAYER_GET_INFO)
         self.send(pk)
 
     def on_process_player_info(self, pkg):
+        self.__player_info_code = pkg.get_error()
         self.__player_name = pkg.displayName
         self.__uId = pkg.uId
+        self.__gold = pkg.gold
+        self.__gem = pkg.gem
+        self.__trophy = pkg.trophy
+        self.__server_time = pkg.server_time
+
+    def get_player_info_code(self):
+        return self.__player_info_code
 
     def get_player_name(self):
         return self.__player_name
 
     def get_uId(self):
         return self.__uId
+
+    def get_user_gold(self):
+        return self.__gold
+
+    def get_user_gem(self):
+        return self.__gem
 
     def send_open_chest(self, chestId):
         pkg = CmdSendOpenChest()
@@ -76,6 +94,11 @@ class PlayerModule(BaseModule):
         error = pkg.get_error()
         print("check speed up chest ok {}".format(error))
         self.__speed_up_chest_code = error
+        if error == error_code.SUCCESS:
+            self.__chest_id = pkg.chest_id
+            self.__state = pkg.state
+            self.__gem_change = pkg.gem_change
+            self.__reward_list = pkg.reward_list
 
         if error == error_code.SUCCESS:
             logger.info("speed up chest success")
@@ -92,9 +115,43 @@ class PlayerModule(BaseModule):
         error = pkg.get_error()
         print("check claim chest ok {}".format(error))
         self.__claim_chest_code = error
+        if error == error_code.SUCCESS:
+            self.__chest_id = pkg.chest_id
+            self.__state = pkg.state
+            self.__gem_change = pkg.gem_change
+            self.__reward_list = pkg.reward_list
 
         if error == error_code.SUCCESS:
             logger.info("claim chest success")
 
+    def send_get_user_inventory(self):
+        pk = CmdCommonPacket(cmd_code.GET_USER_INVENTORY)
+        self.send(pk)
+
+    def on_process_user_inventory(self, pkg):
+        error = pkg.get_error()
+        print("check user inventory ok {}".format(error))
+        self.__user_inventory_code = error
+        if error == error_code.SUCCESS:
+            self.__card_inventory = pkg.card_inventory
+
+    def get_user_inventory_code(self):
+        return self.__user_inventory_code
+
+    def get_card_inventory(self):
+        return self.__card_inventory
+
     def get_claim_chest_code(self):
         return self.__claim_chest_code
+
+    def get_chest_id(self):
+        return self.__chest_id
+
+    def get_chest_state(self):
+        return self.__state
+
+    def get_gem_change(self):
+        return self.__gem_change
+
+    def get_reward_list(self):
+        return self.__reward_list

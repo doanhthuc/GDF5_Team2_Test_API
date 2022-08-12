@@ -1,3 +1,4 @@
+from typing import Dict
 from network.socket.in_packet import InPacket
 
 
@@ -13,14 +14,14 @@ class CmdReceivePlayerInfo(InPacket):
 
         self.gem = self.get_int()
         self.trophy = self.get_int()
-        self.timeServer = self.get_long()
+        self.server_time = self.get_long()
 
         print("uid = {}".format(self.uId))
         print("displayName = {}".format(self.displayName))
         print("gold = {}".format(self.gold))
         print("gem = {}".format(self.gem))
         print("trophy = {}".format(self.trophy))
-        print("timeServer = {}".format(self.timeServer))
+        print("server_time = {}".format(self.server_time))
 
 
 class CmdReceiveOpenChest(InPacket):
@@ -31,12 +32,12 @@ class CmdReceiveOpenChest(InPacket):
         print("error = {}".format(self.get_error()))
         error_code = self.get_error()
         if error_code == 0:
-            self.chestId = self.get_int()
+            self.chest_id = self.get_int()
             self.state = self.get_int()
-            self.claimTime = self.get_long()
-            print("chestId = {}".format(self.chestId))
+            self.claim_time = self.get_long()
+            print("chest_id = {}".format(self.chest_id))
             print("state = {}".format(self.state))
-            print("claimTime = {}".format(self.claimTime))
+            print("claim_time = {}".format(self.claim_time))
 
 
 class CmdReceiveSpeedUpChest(InPacket):
@@ -47,12 +48,22 @@ class CmdReceiveSpeedUpChest(InPacket):
         print("error = {}".format(self.get_error()))
         error_code = self.get_error()
         if error_code == 0:
-            self.chestId = self.get_int()
+            self.chest_id = self.get_int()
             self.state = self.get_int()
-            self.claimTime = self.get_long()
-            print("chestId = {}".format(self.chestId))
+            self.gem_change = self.get_int()
+            self.reward_size = self.get_int()
+            self.reward_list = dict()
+            for _ in range(self.reward_size):
+                itemType = self.get_int()
+                itemQuantity = self.get_int()
+                self.reward_list[itemType] = self.reward_list.get(
+                    itemType, 0) + itemQuantity
+
+            print("chest_id = {}".format(self.chest_id))
             print("state = {}".format(self.state))
-            print("claimTime = {}".format(self.claimTime))
+            print("gem_change = {}".format(self.gem_change))
+            print("reward_list = {}".format(self.reward_list))
+
 
 class CmdReceiveClaimChest(InPacket):
     def __init__(self):
@@ -62,9 +73,43 @@ class CmdReceiveClaimChest(InPacket):
         print("error = {}".format(self.get_error()))
         error_code = self.get_error()
         if error_code == 0:
-            self.chestId = self.get_int()
+            self.chest_id = self.get_int()
             self.state = self.get_int()
-            self.claimTime = self.get_long()
-            print("chestId = {}".format(self.chestId))
+            self.gem_change = self.get_int()
+            self.reward_size = self.get_int()
+            self.reward_list = dict()
+            for _ in range(self.reward_size):
+                itemType = self.get_int()
+                itemQuantity = self.get_int()
+                self.reward_list[itemType] = self.reward_list.get(
+                    itemType, 0) + itemQuantity
+
+            print("chest_id = {}".format(self.chest_id))
             print("state = {}".format(self.state))
-            print("claimTime = {}".format(self.claimTime))
+            print("gem_change = {}".format(self.gem_change))
+            print("reward_list = {}".format(self.reward_list))
+
+
+class CmdReceiveUserInventory(InPacket):
+    def __init__(self):
+        super().__init__()
+
+    def read_data(self):
+        print("error = {}".format(self.get_error()))
+        error_code = self.get_error()
+        if error_code == 0:
+            self.card_inventory_size = self.get_int()
+            self.card_inventory = dict()
+            for _ in range(self.card_inventory_size):
+                card_type = self.get_int()
+                card_level = self.get_int()
+                card_quantity = self.get_int()
+                self.card_inventory[card_type] = {
+                    "card_level": card_level,
+                    "card_quantity": card_quantity
+                }
+            print("card_inventory = {}".format(self.card_inventory))
+            self.battle_deck_size = self.get_int()
+            self.battle_deck = []
+            for _ in range(self.battle_deck_size):
+                self.battle_deck.append(self.get_int())

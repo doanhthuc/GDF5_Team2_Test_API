@@ -1,6 +1,6 @@
 from modules.base_module import BaseModule
 from modules.cheat.cheat_receive import *
-from .cheat_send import CmdCheatUserInfo
+from .cheat_send import *
 from modules.connection.connection_receive import *
 from modules.connection.connection_send import *
 from network import cmd_code
@@ -40,6 +40,10 @@ class CheatModule(BaseModule):
             pkg = CmdReceiveCheatUserInfo()
             pkg.init(raw_pkg)
             self.on_process_cheat_user_info(pkg)
+        elif cmd_id == cmd_code.CHEAT_LOBBY_CHEST:
+            pkg = CmdReceiveCheatLobbyChest()
+            pkg.init(raw_pkg)
+            self.on_process_cheat_lobby_chest(pkg)
 
     def send_cheat(self, cheat_type, params):
         self.send(CmdSendCheat(cheat_type, params))
@@ -64,3 +68,21 @@ class CheatModule(BaseModule):
         print("get_cheat_user_info_code self {} ".format(
             self.__cheat_user_info_code))
         return self.__cheat_user_info_code
+
+    def send_cheat_lobby_chest(self, chestId, chestState, chestRemainingTime):
+        pkg = CmdSendCheatLobbyChest()
+        pkg.set_data(chestId, chestState, chestRemainingTime)
+        self.send(pkg)
+
+    def on_process_cheat_lobby_chest(self, pkg):
+        error = pkg.get_error()
+        print("check open chest ok {}".format(error))
+        self.__cheat_lobby_chest_code = error
+
+        if error == error_code.SUCCESS:
+            logger.info("cheat success")
+
+    def get_cheat_lobby_chest_code(self):
+        print("get_cheat_lobby_chest_code self {} ".format(
+            self.__cheat_lobby_chest_code))
+        return self.__cheat_lobby_chest_code
