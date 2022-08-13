@@ -113,3 +113,16 @@ class CmdReceiveUserInventory(InPacket):
             self.battle_deck = []
             for _ in range(self.battle_deck_size):
                 self.battle_deck.append(self.get_int())
+
+
+class CmdReceiveUpgradeCard(InPacket):
+    def __init__(self):
+        super().__init__()
+
+    def read_data(self):
+        print("error = {}".format(self.get_error()))
+        error_code = self.get_error()
+        if error_code == 0:
+            self.card_id = self.get_int()
+            self.card_level = self.get_int()
+            self.card_quantity = self.get_int()

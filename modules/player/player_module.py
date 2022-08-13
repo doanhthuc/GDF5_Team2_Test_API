@@ -1,4 +1,6 @@
 import re
+from cheat.cheat_receive import CmdReceiveCheatCard
+from cheat.cheat_send import CmdSendCheatUserCard
 from modules.base_module import BaseModule
 from modules.player.player_send import *
 from network.base_packet import *
@@ -40,6 +42,15 @@ class PlayerModule(BaseModule):
             pkg = CmdReceiveClaimChest()
             pkg.init(raw_pkg)
             self.on_process_claim_chest(pkg)
+        if cmd_id == cmd_code.CHEAT_USER_CARD:
+            pkg = CmdReceiveCheatCard()
+            pkg.init(raw_pkg)
+            self.on_process_cheat_card(pkg)
+        if cmd_id == cmd_code.UPGRADE_CARD:
+            pkg = CmdReceiveUpgradeCard()
+            pkg.init(raw_pkg)
+            self.on_process_upgrade_card(pkg)
+
 
     def send_get_player_info(self):
         pk = CmdCommonPacket(cmd_code.PLAYER_GET_INFO)
@@ -77,13 +88,13 @@ class PlayerModule(BaseModule):
     def on_process_open_chest(self, pkg):
         error = pkg.get_error()
         print("check open chest ok {}".format(error))
-        self.__open_chest_code = error
+        self.__chest_code = error
 
         if error == error_code.SUCCESS:
             logger.info("connect success")
 
     def get_open_chest_code(self):
-        return self.__open_chest_code
+        return self.__chest_code
 
     def send_speed_up_chest(self, chestId):
         pkg = CmdSendSpeedUpChest()
@@ -93,7 +104,7 @@ class PlayerModule(BaseModule):
     def on_process_speed_up_chest(self, pkg):
         error = pkg.get_error()
         print("check speed up chest ok {}".format(error))
-        self.__speed_up_chest_code = error
+        self.__chest_code = error
         if error == error_code.SUCCESS:
             self.__chest_id = pkg.chest_id
             self.__state = pkg.state
@@ -104,7 +115,7 @@ class PlayerModule(BaseModule):
             logger.info("speed up chest success")
 
     def get_speed_up_chest_code(self):
-        return self.__speed_up_chest_code
+        return self.__chest_code
 
     def send_claim_chest(self, chestId):
         pkg = CmdSendClaimChest()
@@ -114,7 +125,7 @@ class PlayerModule(BaseModule):
     def on_process_claim_chest(self, pkg):
         error = pkg.get_error()
         print("check claim chest ok {}".format(error))
-        self.__claim_chest_code = error
+        self.__chest_code = error
         if error == error_code.SUCCESS:
             self.__chest_id = pkg.chest_id
             self.__state = pkg.state
@@ -135,6 +146,34 @@ class PlayerModule(BaseModule):
         if error == error_code.SUCCESS:
             self.__card_inventory = pkg.card_inventory
 
+    def send_cheat_card(self, card_id, card_level, card_quantity):
+        pk = CmdSendCheatUserCard()
+        pk.set_data(card_id, card_level, card_quantity)
+        self.send(pk)
+
+    def on_process_cheat_card(self, pkg):
+        error = pkg.get_error()
+        self.__cheat_card_code = error
+        if error == error_code.SUCCESS:
+            self.__card_id = pkg.card_id
+            self.__card_level = pkg.card_level
+            self.__card_quantity = pkg.card_quantity
+        
+
+    def send_upgrade_card(self, cardId):
+        pk = cmdSendUpgradeCard()
+        pk.set_data(cardId)
+        self.send(pk)
+
+    def on_process_upgrade_card(self, pkg):
+        error = pkg.get_error()
+        print("upgrade card ok {}".format(error))
+        self.__upgrade_card_code = error
+        if error == error_code.SUCCESS:
+            self.__card_id = pkg.card_id
+            self.__card_level = pkg.card_level
+            self.__card_quantity = pkg.card_quantity
+
     def get_user_inventory_code(self):
         return self.__user_inventory_code
 
@@ -142,7 +181,7 @@ class PlayerModule(BaseModule):
         return self.__card_inventory
 
     def get_claim_chest_code(self):
-        return self.__claim_chest_code
+        return self.__chest_code
 
     def get_chest_id(self):
         return self.__chest_id
@@ -155,3 +194,21 @@ class PlayerModule(BaseModule):
 
     def get_reward_list(self):
         return self.__reward_list
+
+    def get_chest_code(self):
+        return self.__chest_code
+
+    def get_card_id(self):
+        return self.__card_id
+
+    def get_card_level(self):
+        return self.__card_level
+
+    def get_card_quantity(self):
+        return self.__card_quantity
+
+    def get_upgrade_card_code(self):
+        return self.__upgrade_card_code
+
+    def get_cheat_card_code(self):
+        return self.__cheat_card_code

@@ -42,3 +42,15 @@ class CmdSendClaimChest(OutPacket):
         print("chestId: ", self.__chestId)
 
 
+class cmdSendUpgradeCard(OutPacket):
+    def __init__(self):
+        super().__init__()
+        self.init_data(2)
+        self.set_cmd_id(cmd_code.UPGRADE_CARD)
+
+    def set_data(self, cardId):
+        self.__cardId = cardId
+
+    def put_data(self):
+        self.put_int(self.__cardId)
+        print("cardId: ", self.__cardId)

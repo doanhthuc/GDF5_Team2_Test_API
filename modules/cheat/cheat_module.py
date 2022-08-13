@@ -48,7 +48,7 @@ class CheatModule(BaseModule):
     def send_cheat(self, cheat_type, params):
         self.send(CmdSendCheat(cheat_type, params))
 
-    def send_cheat_user_info(self, gem, gold, trophy):
+    def send_cheat_user_info(self, gem, gold, trophy=0):
         pkg = CmdCheatUserInfo()
         pkg.set_data(gem, gold, trophy)
         self.send(pkg)

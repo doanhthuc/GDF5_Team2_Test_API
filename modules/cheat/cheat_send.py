@@ -47,3 +47,18 @@ class CmdSendGetUserInventory(OutPacket):
         self.__inventoryId = inventoryId
 
 
+class CmdSendCheatUserCard(OutPacket):
+    def __init__(self):
+        super().__init__()
+        self.init_data(2)
+        self.set_cmd_id(cmd_code.CHEAT_USER_CARD)
+
+    def set_data(self, card_id, card_level, card_quantity):
+        self.__card_id = card_id
+        self.__card_level = card_level
+        self.__card_quantity = card_quantity
+
+    def put_data(self):
+        self.put_int(self.__card_id)
+        self.put_int(self.__card_level)
+        self.put_int(self.__card_quantity)

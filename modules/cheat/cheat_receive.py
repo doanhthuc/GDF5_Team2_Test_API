@@ -16,6 +16,7 @@ class CmdReceiveCheatUserInfo(InPacket):
             print("gem = {}".format(self.gem))
             print("trophy = {}".format(self.trophy))
 
+
 class CmdReceiveCheatLobbyChest(InPacket):
     def __init__(self):
         super().__init__()
@@ -30,3 +31,19 @@ class CmdReceiveCheatLobbyChest(InPacket):
             print("chest_id = {}".format(self.chest_id))
             print("state = {}".format(self.state))
             print("claim_time = {}".format(self.claim_time))
+
+
+class CmdReceiveCheatCard(InPacket):
+    def __init__(self):
+        super().__init__()
+
+    def read_data(self):
+        print("error = {}".format(self.get_error()))
+        error_code = self.get_error()
+        if error_code == 0:
+            self.card_id = self.get_int()
+            self.card_level = self.get_int()
+            self.card_quantity = self.get_int()
+            print("card_id = {}".format(self.card_id))
+            print("card_level = {}".format(self.card_level))
+            print("card_quantity = {}".format(self.card_quantity))
