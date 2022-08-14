@@ -126,3 +126,15 @@ class CmdReceiveUpgradeCard(InPacket):
             self.card_id = self.get_int()
             self.card_level = self.get_int()
             self.card_quantity = self.get_int()
+
+
+class CmdReceiveSwapCard(InPacket):
+    def __init__(self):
+        super().__init__()
+
+    def read_data(self):
+        print("error = {}".format(self.get_error()))
+        error_code = self.get_error()
+        if error_code == 0:
+            self.card_id_in_deck = self.get_int()
+            self.card_id_in_collection = self.get_int()

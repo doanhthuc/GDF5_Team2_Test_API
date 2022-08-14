@@ -44,6 +44,10 @@ class CheatModule(BaseModule):
             pkg = CmdReceiveCheatLobbyChest()
             pkg.init(raw_pkg)
             self.on_process_cheat_lobby_chest(pkg)
+        elif cmd_id == cmd_code.CHEAT_USER_CARD:
+            pkg = CmdReceiveCheatCard()
+            pkg.init(raw_pkg)
+            self.on_process_cheat_user_card(pkg)
 
     def send_cheat(self, cheat_type, params):
         self.send(CmdSendCheat(cheat_type, params))
@@ -55,6 +59,9 @@ class CheatModule(BaseModule):
 
     def send_cheat_gem(self, gem):
         self.send_cheat_user_info(gem, 0, 0)
+
+    def send_cheat_gold(self, gold):
+        self.send_cheat_user_info(0, gold, 0)
 
     def on_process_cheat_user_info(self, pkg):
         error = pkg.get_error()
@@ -86,3 +93,21 @@ class CheatModule(BaseModule):
         print("get_cheat_lobby_chest_code self {} ".format(
             self.__cheat_lobby_chest_code))
         return self.__cheat_lobby_chest_code
+
+    def send_cheat_user_card(self, card_id, card_level, card_quantity):
+        pkg = CmdSendCheatUserCard()
+        pkg.set_data(card_id, card_level, card_quantity)
+        self.send(pkg)
+
+    def on_process_cheat_user_card(self, pkg):
+        error = pkg.get_error()
+        print("check open chest ok {}".format(error))
+        self.__cheat_user_card_code = error
+
+        if error == error_code.SUCCESS:
+            logger.info("cheat success")
+
+    def get_cheat_user_card_code(self):
+        print("get_cheat_user_card_code self {} ".format(
+            self.__cheat_user_card_code))
+        return self.__cheat_user_card_code

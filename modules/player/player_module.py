@@ -1,6 +1,6 @@
 import re
-from cheat.cheat_receive import CmdReceiveCheatCard
-from cheat.cheat_send import CmdSendCheatUserCard
+from modules.cheat.cheat_receive import CmdReceiveCheatCard
+from modules.cheat.cheat_send import CmdSendCheatUserCard
 from modules.base_module import BaseModule
 from modules.player.player_send import *
 from network.base_packet import *
@@ -50,7 +50,10 @@ class PlayerModule(BaseModule):
             pkg = CmdReceiveUpgradeCard()
             pkg.init(raw_pkg)
             self.on_process_upgrade_card(pkg)
-
+        if cmd_id == cmd_code.SWAP_CARD:
+            pkg = CmdReceiveSwapCard()
+            pkg.init(raw_pkg)
+            self.on_process_swap_card(pkg)
 
     def send_get_player_info(self):
         pk = CmdCommonPacket(cmd_code.PLAYER_GET_INFO)
@@ -145,6 +148,7 @@ class PlayerModule(BaseModule):
         self.__user_inventory_code = error
         if error == error_code.SUCCESS:
             self.__card_inventory = pkg.card_inventory
+            self.__battle_deck = pkg.battle_deck
 
     def send_cheat_card(self, card_id, card_level, card_quantity):
         pk = CmdSendCheatUserCard()
@@ -158,10 +162,9 @@ class PlayerModule(BaseModule):
             self.__card_id = pkg.card_id
             self.__card_level = pkg.card_level
             self.__card_quantity = pkg.card_quantity
-        
 
     def send_upgrade_card(self, cardId):
-        pk = cmdSendUpgradeCard()
+        pk = CmdSendUpgradeCard()
         pk.set_data(cardId)
         self.send(pk)
 
@@ -174,11 +177,36 @@ class PlayerModule(BaseModule):
             self.__card_level = pkg.card_level
             self.__card_quantity = pkg.card_quantity
 
+    def send_swap_card(self, card_id_in_collection, card_id_in_deck):
+        pk = CmdSendSwapCard()
+        pk.set_data(card_id_in_collection, card_id_in_deck)
+        self.send(pk)
+
+    def on_process_swap_card(self, pkg):
+        error = pkg.get_error()
+        print("swap card ok {}".format(error))
+        self.__swap_card_code = error
+        if error == error_code.SUCCESS:
+            self.__card_id_in_collection = pkg.card_id_in_collection
+            self.__card_id_in_deck = pkg.card_id_in_deck
+
+    def get_swap_card_code(self):
+        return self.__swap_card_code
+
+    def get_card_id_in_collection(self):
+        return self.__card_id_in_collection
+
+    def get_card_id_in_deck(self):
+        return self.__card_id_in_deck
+
     def get_user_inventory_code(self):
         return self.__user_inventory_code
 
     def get_card_inventory(self):
         return self.__card_inventory
+
+    def get_battle_deck(self):
+        return self.__battle_deck
 
     def get_claim_chest_code(self):
         return self.__chest_code
