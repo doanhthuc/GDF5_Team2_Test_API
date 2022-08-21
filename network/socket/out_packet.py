@@ -43,7 +43,7 @@ class OutPacket:
     def update_size(self):
         size = len(self.__data) - 3
         self.__data[INDEX_SIZE_PACKET] = size >> 8
-        self.__data[INDEX_SIZE_PACKET + 1] = size >> 0
+        self.__data[INDEX_SIZE_PACKET + 1] = (size & 255) >> 0
 
     def put_byte(self, b):
         self.__data.append(b)

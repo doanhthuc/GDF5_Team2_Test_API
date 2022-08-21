@@ -14,9 +14,9 @@ from network.socket.packet_header_analyze import *
 
 from modules.connection.connection_send import *
 
-HOST = "127.0.0.1"
+# HOST = "127.0.0.1"
 PORT = 10072
-# HOST = "120.138.65.108"
+HOST = "120.138.65.108"
 # PORT = 10072
 
 class ZPSClient(Cmd):
